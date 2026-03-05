@@ -1,0 +1,83 @@
+@startuml LearnOw_UC03_CourseReview
+' ============================================================
+'  UC03 - COURSE REVIEW & APPROVAL (THẨM ĐỊNH VIÊN)
+' ============================================================
+left to right direction
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor "Reviewer\n(Thẩm định viên)" as Reviewer #Plum
+actor "Instructor\n(Giảng viên)" as Instructor #Orange
+actor "Email Service" as Email #LightGray
+
+rectangle "Thẩm định & Duyệt khóa học" {
+
+  usecase "UC-REVIEW-01\nXem danh sách\nkhóa học chờ duyệt" as UC01
+  usecase "UC-REVIEW-02\nXem toàn bộ nội dung\nkhóa học cần duyệt" as UC02
+  usecase "UC-REVIEW-03\nĐánh giá theo\nbộ tiêu chí" as UC03
+  usecase "UC-REVIEW-04\nPhê duyệt khóa học\n(Approved)" as UC04
+  usecase "UC-REVIEW-05\nTừ chối khóa học\n(Rejected)" as UC05
+  usecase "UC-REVIEW-06\nYêu cầu chỉnh sửa\n(Needs Revision)" as UC06
+  usecase "UC-REVIEW-07\nGhi nhận xét\n& lý do" as UC07
+  usecase "UC-REVIEW-08\nXem lịch sử\nthẩm định" as UC08
+  usecase "Gửi thông báo\nkết quả" as UC_NOTIFY
+}
+
+Reviewer --> UC01
+Reviewer --> UC02
+Reviewer --> UC03
+Reviewer --> UC08
+
+UC03 ..> UC04 : <<extend>>
+UC03 ..> UC05 : <<extend>>
+UC03 ..> UC06 : <<extend>>
+UC04 ..> UC07 : <<include>>
+UC05 ..> UC07 : <<include>>
+UC06 ..> UC07 : <<include>>
+UC04 ..> UC_NOTIFY : <<include>>
+UC05 ..> UC_NOTIFY : <<include>>
+UC06 ..> UC_NOTIFY : <<include>>
+
+UC_NOTIFY --> Email
+UC_NOTIFY --> Instructor
+
+note right of UC03
+  **5 Tiêu chí đánh giá (1-5 điểm):**
+  1. Chất lượng nội dung (30%)
+  2. Cấu trúc khóa học (20%)
+  3. Chất lượng video/âm thanh (20%)
+  4. Tài liệu bổ trợ (15%)
+  5. Mô tả & Metadata (15%)
+end note
+
+note bottom of UC04
+  **Approved khi:**
+  - Tất cả tiêu chí ≥ điểm tối thiểu
+  - Điểm TB có trọng số ≥ 3.5
+  → Trạng thái: **Published**
+end note
+
+note bottom of UC05
+  **Rejected khi:**
+  - Bất kỳ tiêu chí = 1
+  - HOẶC điểm TB < 2.5
+  → Instructor có thể sửa & gửi lại
+end note
+
+note bottom of UC06
+  **Needs Revision:**
+  - Các trường hợp còn lại
+  → Instructor chỉnh sửa & gửi lại
+end note
+
+note left of UC08
+  **Dữ liệu lịch sử:**
+  - Người thẩm định
+  - Thời gian
+  - Quyết định
+  - Điểm từng tiêu chí
+  - Nhận xét
+end note
+
+@enduml
