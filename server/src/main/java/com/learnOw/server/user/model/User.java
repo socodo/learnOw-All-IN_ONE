@@ -3,6 +3,7 @@ package com.learnOw.server.user.model;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -14,6 +15,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -25,14 +27,22 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "users")
 @Data
-@Builder
+@Builder    
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
 
+    public enum UserStatus{
+        ACTIVE,
+        BANNED
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserRole> userRoles;
 
     @Column(unique = true, nullable = false)
     private String email;
